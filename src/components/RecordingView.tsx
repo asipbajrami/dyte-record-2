@@ -68,13 +68,17 @@ export default function RecordingView() {
           }}
         />
       ) : (
-        <DyteSimpleGrid
-          participants={targetParticipants}
-          style={{
-            width: "100vw",
-            height: "100vh",
-          }}
-        />
+        <DyteMixedGrid
+        participants={targetParticipants}
+        pinnedParticipants={targetParticipants}
+        screenShareParticipants={screensharedParticipants}
+        plugins={[]}
+        meeting={meeting}
+        style={{
+          width: "100vw",
+          height: "100vh",
+        }}
+      />
       )}
 
       <DyteParticipantsAudio meeting={meeting} />

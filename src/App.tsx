@@ -36,8 +36,8 @@ function App() {
         authToken,
         roomName,
         defaults: {
-          video: true,
-          audio: true,
+          video: false,
+          audio: false,
         },
         apiBase: apiBase ?? "https://api.cluster.dyte.in",
       });
