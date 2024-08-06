@@ -57,7 +57,7 @@ function App() {
   // To avoid that and to make it fill a parent container, pass the prop:
   // `mode="fill"` to the component.
   return (
-    <DyteProvider value={meeting} fallback={<div>Loading...</div>}>
+    <DyteProvider value={meeting} fallback={<div>Loading......</div>}>
       <RecordingView />
     </DyteProvider>
   );
