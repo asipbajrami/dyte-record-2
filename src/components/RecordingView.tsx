@@ -6,7 +6,7 @@ import {
 import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core";
 import { useEffect } from "react";
 
-const TARGET_PRESET = "LEAD";
+const TARGET_PRESET = "livestream_host";
 
 export default function RecordingView() {
   const { meeting } = useDyteMeeting();
