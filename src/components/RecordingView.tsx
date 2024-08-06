@@ -31,6 +31,13 @@ export default function RecordingView() {
     // for (const participant of targetParticipants) {
     //   participant.pin();
     // }
+    targetParticipants.forEach(participant => {
+      if (participant.videoTrack) {
+        console.log(`Video track available for ${participant.name}`);
+      } else {
+        console.log(`No video track for ${participant.name}`);
+      }
+    });
   }, [targetParticipants]);
 
   return (
@@ -45,6 +52,7 @@ export default function RecordingView() {
         alignContent: "center",
         width: "100vw",
         height: "100vh",
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
       }}
     >
       {hasScreenshare ? (
