@@ -19,6 +19,10 @@ export default function RecordingView() {
     (participant) => participant.presetName === TARGET_PRESET
   );
 
+  targetParticipants.forEach((participant) => {
+    participant.name = participant.name + " - " + participant.id;
+  });
+
   const screensharedParticipants = useDyteSelector((meeting) =>
     meeting.participants.joined.toArray().filter((p) => p.screenShareEnabled)
   );
