@@ -1,6 +1,7 @@
-import { DyteSimpleGrid } from "@dytesdk/react-ui-kit";
 import {
   DyteParticipantsAudio,
+  DyteGrid,
+  DyteSimpleGrid,
 } from "@dytesdk/react-ui-kit";
 import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core";
 import { useEffect } from "react";
@@ -32,20 +33,22 @@ export default function RecordingView() {
     <div style={{
       display: 'flex',
       flexDirection: 'column',
-      width: '33%',
+      width: '33.33%',
       height: '100%',
       padding: '10px',
       boxSizing: 'border-box',
     }}>
       <h2 style={{ textAlign: 'center', color: 'white' }}>{title}</h2>
-      <DyteSimpleGrid
-        participants={participants}
-        meeting={meeting}
-        style={{
-          width: '100%',
-          height: 'calc(100% - 40px)', // Adjust for the title
-        }}
-      />
+      {participants.length > 0 && (
+        <DyteSimpleGrid
+          participants={participants}
+          meeting={meeting}
+          style={{
+            width: '100%',
+            height: 'calc(100% - 40px)', // Adjust for the title
+          }}
+        />
+      )}
     </div>
   );
 
@@ -59,9 +62,9 @@ export default function RecordingView() {
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
       }}
     >
-      {renderColumn("Affirmative", targetParticipants)}
-      {renderColumn("Judge", [])}
       {renderColumn("Negative", [])}
+      {renderColumn("Judge", [])}
+      {renderColumn("Affirmative", targetParticipants)}
       <DyteParticipantsAudio meeting={meeting} />
     </main>
   );
