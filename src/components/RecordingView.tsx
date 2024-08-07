@@ -1,6 +1,5 @@
 import {
   DyteParticipantsAudio,
-  DyteGrid,
   DyteSimpleGrid,
 } from "@dytesdk/react-ui-kit";
 import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core";
