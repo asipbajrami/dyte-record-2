@@ -1,7 +1,6 @@
+import { DyteSimpleGrid } from "@dytesdk/react-ui-kit";
 import {
-  DyteMixedGrid,
   DyteParticipantsAudio,
-  DyteSimpleGrid,
 } from "@dytesdk/react-ui-kit";
 import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core";
 import { useEffect } from "react";
@@ -19,22 +18,7 @@ export default function RecordingView() {
     (participant) => participant.presetName === TARGET_PRESET
   );
 
-  targetParticipants.forEach((participant) => {
-    participant.name = participant.name + " - " + participant.id;
-  });
-
-  const screensharedParticipants = useDyteSelector((meeting) =>
-    meeting.participants.joined.toArray().filter((p) => p.screenShareEnabled)
-  );
-
-  const hasScreenshare = screensharedParticipants.length > 0;
-
   useEffect(() => {
-    // Ideally there should be just one participant with the preset name "LEAD"
-    // Comment out if you don't want to pin the peer
-    // for (const participant of targetParticipants) {
-    //   participant.pin();
-    // }
     targetParticipants.forEach(participant => {
       if (participant.videoTrack) {
         console.log(`Video track available for ${participant.name}`);
@@ -44,44 +28,40 @@ export default function RecordingView() {
     });
   }, [targetParticipants]);
 
+  const renderColumn = (title: string, participants: any[]) => (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      width: '33%',
+      height: '100%',
+      padding: '10px',
+      boxSizing: 'border-box',
+    }}>
+      <h2 style={{ textAlign: 'center', color: 'white' }}>{title}</h2>
+      <DyteSimpleGrid
+        participants={participants}
+        meeting={meeting}
+        style={{
+          width: '100%',
+          height: 'calc(100% - 40px)', // Adjust for the title
+        }}
+      />
+    </div>
+  );
+
   return (
     <main
       style={{
         display: "flex",
         position: "relative",
-        paddingTop: "0rem",
-        flexWrap: "wrap",
-        flexShrink: "0",
-        justifyContent: "center",
-        alignContent: "center",
         width: "100vw",
         height: "100vh",
-        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
       }}
     >
-      {hasScreenshare ? (
-        <DyteMixedGrid
-          participants={targetParticipants}
-          pinnedParticipants={targetParticipants}
-          screenShareParticipants={screensharedParticipants}
-          plugins={[]}
-          meeting={meeting}
-          style={{
-            width: "100vw",
-            height: "100vh",
-          }}
-        />
-      ) : (
-        <DyteSimpleGrid
-          participants={targetParticipants}
-          meeting={meeting}
-          style={{
-            width: "100vw",
-            height: "100vh",
-          }}
-        />
-      )}
-
+      {renderColumn("Affirmative", targetParticipants)}
+      {renderColumn("Judge", [])}
+      {renderColumn("Negative", [])}
       <DyteParticipantsAudio meeting={meeting} />
     </main>
   );
