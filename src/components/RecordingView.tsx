@@ -27,10 +27,6 @@ export default function RecordingView() {
     (participant) => participant.presetName === JUDGE
   );
 
-  useEffect(() => {
-    // Any side effects can be added here
-  }, []);
-
   const renderParticipantGrid = (participants: any[], gridStyle: React.CSSProperties) => (
     <DyteSimpleGrid
       participants={participants}
@@ -47,19 +43,25 @@ export default function RecordingView() {
         width: "100vw",
         height: "100vh",
         backgroundColor: '#000',
+        color: 'white',
       }}
     >
-      <div style={{ display: 'flex', height: '100%' }}>
+      {/* Column Titles */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 20px' }}>
+        <h2 style={{ color: 'red' }}>Negative</h2>
+        <h2 style={{ color: 'yellow' }}>Judge</h2>
+        <h2 style={{ color: 'blue' }}>Affirmative</h2>
+      </div>
+
+      <div style={{ display: 'flex', flex: 1 }}>
         {/* Negative Column */}
-        <div style={{ width: '33.33%', display: 'flex', flexDirection: 'column' }}>
-          <h2 style={{ textAlign: 'center', color: 'red' }}>Negative</h2>
-          {renderParticipantGrid(negativeParticipants, { flex: 1 })}
+        <div style={{ width: '33.33%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          {renderParticipantGrid(negativeParticipants, { height: '50%' })}
         </div>
 
-        {/* Center Column with Judge and Logo */}
-        <div style={{ width: '33.33%', display: 'flex', flexDirection: 'column' }}>
-          <h2 style={{ textAlign: 'center', color: 'yellow' }}>Judge</h2>
-          {renderParticipantGrid(judgeParticipants, { height: '30%' })}
+        {/* Center Column with Judges and Logo */}
+        <div style={{ width: '33.33%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          {judgeParticipants[0] && renderParticipantGrid([judgeParticipants[0]], { height: '25%' })}
           <div style={{ 
             flex: 1, 
             display: 'flex', 
@@ -67,17 +69,17 @@ export default function RecordingView() {
             alignItems: 'center'
           }}>
             <img src={logo} alt="Logo" style={{
-              maxWidth: '40%',
-              maxHeight: '40%',
+              maxWidth: '80%',
+              maxHeight: '80%',
               objectFit: 'contain'
             }} />
           </div>
+          {judgeParticipants[1] && renderParticipantGrid([judgeParticipants[1]], { height: '25%' })}
         </div>
 
         {/* Affirmative Column */}
-        <div style={{ width: '33.33%', display: 'flex', flexDirection: 'column' }}>
-          <h2 style={{ textAlign: 'center', color: 'blue' }}>Affirmative</h2>
-          {renderParticipantGrid(affirmativeParticipants, { flex: 1 })}
+        <div style={{ width: '33.33%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          {renderParticipantGrid(affirmativeParticipants, { height: '50%' })}
         </div>
       </div>
       <DyteParticipantsAudio meeting={meeting} />
