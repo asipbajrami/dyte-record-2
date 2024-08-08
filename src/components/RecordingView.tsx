@@ -52,13 +52,13 @@ export default function RecordingView() {
       <div style={{ display: 'flex', height: '100%' }}>
         {/* Negative Column */}
         <div style={{ width: '33.33%', display: 'flex', flexDirection: 'column' }}>
-          <h2 style={{ textAlign: 'center', color: 'white' }}>Negative</h2>
+          <h2 style={{ textAlign: 'center', color: 'red' }}>Negative</h2>
           {renderParticipantGrid(negativeParticipants, { flex: 1 })}
         </div>
 
         {/* Center Column with Judge and Logo */}
         <div style={{ width: '33.33%', display: 'flex', flexDirection: 'column' }}>
-          <h2 style={{ textAlign: 'center', color: 'white' }}>Judge</h2>
+          <h2 style={{ textAlign: 'center', color: 'yellow' }}>Judge</h2>
           {renderParticipantGrid(judgeParticipants, { height: '30%' })}
           <div style={{ 
             flex: 1, 
@@ -76,7 +76,7 @@ export default function RecordingView() {
 
         {/* Affirmative Column */}
         <div style={{ width: '33.33%', display: 'flex', flexDirection: 'column' }}>
-          <h2 style={{ textAlign: 'center', color: 'white' }}>Affirmative</h2>
+          <h2 style={{ textAlign: 'center', color: 'blue' }}>Affirmative</h2>
           {renderParticipantGrid(affirmativeParticipants, { flex: 1 })}
         </div>
       </div>
