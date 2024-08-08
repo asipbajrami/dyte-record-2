@@ -9,7 +9,6 @@ const AFFIRMATIVE = "affirmative";
 const NEGATIVE = "negative";
 const JUDGE = "judge";
 
-
 export default function RecordingView() {
   const { meeting } = useDyteMeeting();
 
