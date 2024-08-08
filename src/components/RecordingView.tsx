@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   DyteParticipantsAudio,
   DyteSimpleGrid,
@@ -13,13 +13,40 @@ const JUDGE = "judge";
 
 export default function RecordingView() {
   const { meeting } = useDyteMeeting();
+  const [participants, setParticipants] = useState<DyteParticipant[]>([]);
 
-  const participants = useDyteSelector((meeting) =>
+  const joinedParticipants = useDyteSelector((meeting) =>
     meeting.participants.joined.toArray()
   );
 
-  const getParticipantsByPreset = (presetName: string): DyteParticipant[] => 
-    participants.filter(p => p.presetName === presetName);
+  useEffect(() => {
+    console.log("Joined participants changed:", joinedParticipants);
+    setParticipants(joinedParticipants);
+
+    const handleParticipantJoin = (participant: DyteParticipant) => {
+      console.log("Participant joined:", participant);
+      setParticipants(prev => [...prev, participant]);
+    };
+
+    const handleParticipantLeave = (participant: DyteParticipant) => {
+      console.log("Participant left:", participant);
+      setParticipants(prev => prev.filter(p => p.id !== participant.id));
+    };
+
+    meeting.participants.joined.on('participantJoined', handleParticipantJoin);
+    meeting.participants.joined.on('participantLeft', handleParticipantLeave);
+
+    return () => {
+      meeting.participants.joined.off('participantJoined', handleParticipantJoin);
+      meeting.participants.joined.off('participantLeft', handleParticipantLeave);
+    };
+  }, [meeting, joinedParticipants]);
+
+  const getParticipantsByPreset = (presetName: string): DyteParticipant[] => {
+    const filteredParticipants = participants.filter(p => p.presetName === presetName);
+    console.log(`Participants for ${presetName}:`, filteredParticipants);
+    return filteredParticipants;
+  };
 
   const renderParticipantColumn = (presetName: string, columnStyle: React.CSSProperties) => {
     const presetParticipants = getParticipantsByPreset(presetName);
@@ -41,6 +68,8 @@ export default function RecordingView() {
   };
 
   const judgeParticipants = getParticipantsByPreset(JUDGE);
+
+  console.log("Rendering with participants:", participants);
 
   return (
     <main
