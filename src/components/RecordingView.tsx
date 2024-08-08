@@ -4,6 +4,7 @@ import {
 } from "@dytesdk/react-ui-kit";
 import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core";
 import { useEffect } from "react";
+import logo from '../assets/logo.png'; // Import the logo
 
 const AFFIRMATIVE = "affirmative";
 const NEGATIVE = "negative";
@@ -72,7 +73,7 @@ export default function RecordingView() {
         transform: 'translate(-50%, -50%)',
         zIndex: 10,
       }}>
-        <img src="/assets/logo.png" alt="Logo" style={{
+        <img src={logo} alt="Logo" style={{
           maxWidth: '150px',
           maxHeight: '150px',
         }} />
