@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   DyteParticipantsAudio,
   DyteSimpleGrid,
@@ -13,74 +13,34 @@ const JUDGE = "judge";
 
 export default function RecordingView() {
   const { meeting } = useDyteMeeting();
-  const [affirmativeParticipants, setAffirmativeParticipants] = useState<DyteParticipant[]>([]);
-  const [negativeParticipants, setNegativeParticipants] = useState<DyteParticipant[]>([]);
-  const [judgeParticipants, setJudgeParticipants] = useState<DyteParticipant[]>([]);
 
-  const joinedParticipants = useDyteSelector((meeting) =>
+  const participants = useDyteSelector((meeting) =>
     meeting.participants.joined.toArray()
   );
 
-  useEffect(() => {
-    const handleParticipantJoin = (participant: DyteParticipant) => {
-      switch (participant.presetName) {
-        case AFFIRMATIVE:
-          setAffirmativeParticipants(prev => [...prev, participant]);
-          break;
-        case NEGATIVE:
-          setNegativeParticipants(prev => [...prev, participant]);
-          break;
-        case JUDGE:
-          setJudgeParticipants(prev => [...prev, participant]);
-          break;
-      }
-    };
+  const getParticipantsByPreset = (presetName: string): DyteParticipant[] => 
+    participants.filter(p => p.presetName === presetName);
 
-    const handleParticipantLeave = (participant: DyteParticipant) => {
-      const removeParticipant = (setter: React.Dispatch<React.SetStateAction<DyteParticipant[]>>) => {
-        setter(prev => prev.filter(p => p.id !== participant.id));
-      };
+  const renderParticipantColumn = (presetName: string, columnStyle: React.CSSProperties) => {
+    const presetParticipants = getParticipantsByPreset(presetName);
+    return (
+      <div style={columnStyle}>
+        {presetParticipants.map((participant, index) => (
+          <DyteSimpleGrid
+            key={participant.id}
+            participants={[participant]}
+            meeting={meeting}
+            style={{
+              height: `${100 / presetParticipants.length}%`,
+              marginBottom: index < presetParticipants.length - 1 ? '10px' : '0',
+            }}
+          />
+        ))}
+      </div>
+    );
+  };
 
-      switch (participant.presetName) {
-        case AFFIRMATIVE:
-          removeParticipant(setAffirmativeParticipants);
-          break;
-        case NEGATIVE:
-          removeParticipant(setNegativeParticipants);
-          break;
-        case JUDGE:
-          removeParticipant(setJudgeParticipants);
-          break;
-      }
-    };
-
-    meeting.participants.joined.on('participantJoined', handleParticipantJoin);
-    meeting.participants.joined.on('participantLeft', handleParticipantLeave);
-
-    // Initial placement of already joined participants
-    joinedParticipants.forEach(handleParticipantJoin);
-
-    return () => {
-      meeting.participants.joined.off('participantJoined', handleParticipantJoin);
-      meeting.participants.joined.off('participantLeft', handleParticipantLeave);
-    };
-  }, [meeting, joinedParticipants]);
-
-  const renderParticipantColumn = (participants: DyteParticipant[], columnStyle: React.CSSProperties) => (
-    <div style={columnStyle}>
-      {participants.map((participant, index) => (
-        <DyteSimpleGrid
-          key={participant.id}
-          participants={[participant]}
-          meeting={meeting}
-          style={{
-            height: `${100 / participants.length}%`,
-            marginBottom: index < participants.length - 1 ? '10px' : '0',
-          }}
-        />
-      ))}
-    </div>
-  );
+  const judgeParticipants = getParticipantsByPreset(JUDGE);
 
   return (
     <main
@@ -102,7 +62,7 @@ export default function RecordingView() {
 
       <div style={{ display: 'flex', flex: 1 }}>
         {/* Negative Column */}
-        {renderParticipantColumn(negativeParticipants, { 
+        {renderParticipantColumn(NEGATIVE, { 
           width: '33.33%', 
           display: 'flex', 
           flexDirection: 'column', 
@@ -141,7 +101,7 @@ export default function RecordingView() {
         </div>
 
         {/* Affirmative Column */}
-        {renderParticipantColumn(affirmativeParticipants, { 
+        {renderParticipantColumn(AFFIRMATIVE, { 
           width: '33.33%', 
           display: 'flex', 
           flexDirection: 'column', 
