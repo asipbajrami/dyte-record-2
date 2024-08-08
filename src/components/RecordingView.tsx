@@ -60,7 +60,7 @@ export default function RecordingView() {
 
         {/* Center Column with Judges and Logo */}
         <div style={{ width: '33.33%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          {judgeParticipants[0] && renderParticipantGrid([judgeParticipants[0]], { height: '25%' })}
+          {judgeParticipants[0] && renderParticipantGrid([judgeParticipants[0]], { height: '50%' })}
           <div style={{ 
             flex: 1, 
             display: 'flex', 
@@ -68,8 +68,8 @@ export default function RecordingView() {
             alignItems: 'center'
           }}>
             <img src={logo} alt="Logo" style={{
-              maxWidth: '80%',
-              maxHeight: '80%',
+              maxWidth: '40%',
+              maxHeight: '40%',
               objectFit: 'contain'
             }} />
           </div>
