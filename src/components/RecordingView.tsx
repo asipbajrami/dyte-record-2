@@ -64,8 +64,8 @@ export default function RecordingView() {
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
       }}
     >
-      {renderColumn("Negative", judgeParticipants)}
-      {renderColumn("Judge", negativeParticipants)}
+      {renderColumn("Negative", negativeParticipants)}
+      {renderColumn("Judge", judgeParticipants)}
       {renderColumn("Affirmative", affrimativeParticipants)}
       <DyteParticipantsAudio meeting={meeting} />
     </main>
