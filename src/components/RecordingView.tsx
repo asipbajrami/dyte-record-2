@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   DyteParticipantsAudio,
   DyteSimpleGrid,
 } from "@dytesdk/react-ui-kit";
-import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core";
+import { useDyteMeeting } from "@dytesdk/react-web-core";
 import { DyteParticipant } from '@dytesdk/web-core';
 import logo from '../assets/logo.png';
 
@@ -13,12 +13,36 @@ const JUDGE = "judge";
 
 export default function RecordingView() {
   const { meeting } = useDyteMeeting();
+  const [participants, setParticipants] = useState<DyteParticipant[]>([]);
 
-  const participants = useDyteSelector((meeting) =>
-    meeting.participants.joined.toArray()
-  );
+  useEffect(() => {
+    const handleParticipantJoin = (participant: DyteParticipant) => {
+      setParticipants(prev => {
+        if (!prev.some(p => p.id === participant.id)) {
+          return [...prev, participant];
+        }
+        return prev;
+      });
+    };
 
-  const getParticipantsByPreset = (presetName: string): DyteParticipant[] => 
+    const handleParticipantLeave = (participant: DyteParticipant) => {
+      setParticipants(prev => prev.filter(p => p.id !== participant.id));
+    };
+
+    // Set up listeners
+    meeting.participants.joined.on('participantJoined', handleParticipantJoin);
+    meeting.participants.joined.on('participantLeft', handleParticipantLeave);
+
+    // Initialize with current participants
+    setParticipants(meeting.participants.joined.toArray());
+
+    return () => {
+      meeting.participants.joined.off('participantJoined', handleParticipantJoin);
+      meeting.participants.joined.off('participantLeft', handleParticipantLeave);
+    };
+  }, [meeting]);
+
+  const getParticipantsByPreset = (presetName: string) => 
     participants.filter(p => p.presetName === presetName);
 
   const renderParticipantColumn = (presetName: string, columnStyle: React.CSSProperties) => {
