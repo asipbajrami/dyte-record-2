@@ -5,7 +5,10 @@ import {
 import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core";
 import { useEffect } from "react";
 
-const TARGET_PRESET = "livestream_host";
+const AFFIRMATIVE = "affirmative";
+const NEGATIVE = "negative";
+const JUDGE = "judge";
+
 
 export default function RecordingView() {
   const { meeting } = useDyteMeeting();
@@ -14,19 +17,19 @@ export default function RecordingView() {
     meeting.participants.joined.toArray()
   );
 
-  const targetParticipants = joinedParticipants.filter(
-    (participant) => participant.presetName === TARGET_PRESET
+  const affrimativeParticipants = joinedParticipants.filter(
+    (participant) => participant.presetName === AFFIRMATIVE
+  );
+  const negativeParticipants = joinedParticipants.filter(
+    (participant) => participant.presetName === NEGATIVE
+  );
+  const judgeParticipants = joinedParticipants.filter(
+    (participant) => participant.presetName === JUDGE
   );
 
   useEffect(() => {
-    targetParticipants.forEach(participant => {
-      if (participant.videoTrack) {
-        console.log(`Video track available for ${participant.name}`);
-      } else {
-        console.log(`No video track for ${participant.name}`);
-      }
-    });
-  }, [targetParticipants]);
+
+  }, []);
 
   const renderColumn = (title: string, participants: any[]) => (
     <div style={{
@@ -61,9 +64,9 @@ export default function RecordingView() {
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
       }}
     >
-      {renderColumn("Negative", [])}
-      {renderColumn("Judge", [])}
-      {renderColumn("Affirmative", targetParticipants)}
+      {renderColumn("Negative", judgeParticipants)}
+      {renderColumn("Judge", negativeParticipants)}
+      {renderColumn("Affirmative", affrimativeParticipants)}
       <DyteParticipantsAudio meeting={meeting} />
     </main>
   );
