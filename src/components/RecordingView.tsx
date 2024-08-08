@@ -55,12 +55,12 @@ export default function RecordingView() {
       <div style={{ display: 'flex', flex: 1 }}>
         {/* Negative Column */}
         <div style={{ width: '33.33%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          {renderParticipantGrid(negativeParticipants, { height: '50%' })}
+          {renderParticipantGrid(negativeParticipants, { height: '40%' })}
         </div>
 
         {/* Center Column with Judges and Logo */}
         <div style={{ width: '33.33%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          {judgeParticipants[0] && renderParticipantGrid([judgeParticipants[0]], { height: '50%' })}
+          {judgeParticipants[0] && renderParticipantGrid([judgeParticipants[0]], { height: '40%' })}
           <div style={{ 
             flex: 1, 
             display: 'flex', 
@@ -68,17 +68,17 @@ export default function RecordingView() {
             alignItems: 'center'
           }}>
             <img src={logo} alt="Logo" style={{
-              maxWidth: '40%',
-              maxHeight: '40%',
+              maxWidth: '50%',
+              maxHeight: '50%',
               objectFit: 'contain'
             }} />
           </div>
-          {judgeParticipants[1] && renderParticipantGrid([judgeParticipants[1]], { height: '25%' })}
+          {judgeParticipants[1] && renderParticipantGrid([judgeParticipants[1]], { height: '40%' })}
         </div>
 
         {/* Affirmative Column */}
         <div style={{ width: '33.33%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          {renderParticipantGrid(affirmativeParticipants, { height: '50%' })}
+          {renderParticipantGrid(affirmativeParticipants, { height: '40%' })}
         </div>
       </div>
       <DyteParticipantsAudio meeting={meeting} />
