@@ -67,8 +67,8 @@ export default function RecordingView() {
             alignItems: 'center'
           }}>
             <img src={logo} alt="Logo" style={{
-              maxWidth: '80%',
-              maxHeight: '80%',
+              maxWidth: '50%',
+              maxHeight: '50%',
               objectFit: 'contain'
             }} />
           </div>
