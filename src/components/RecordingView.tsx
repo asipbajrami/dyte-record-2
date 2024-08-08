@@ -39,6 +39,7 @@ export default function RecordingView() {
       height: '100%',
       padding: '10px',
       boxSizing: 'border-box',
+      backgroundColor: '#0000',
     }}>
       <h2 style={{ textAlign: 'center', color: 'white' }}>{title}</h2>
       {participants.length > 0 && (
@@ -58,27 +59,31 @@ export default function RecordingView() {
     <main
       style={{
         display: "flex",
-        position: "relative",
+        flexDirection: "column",
         width: "100vw",
         height: "100vh",
         backgroundColor: '#0000',
       }}
     >
-      {renderColumn("Negative", negativeParticipants)}
-      {renderColumn("Judge", judgeParticipants)}
       <div style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        zIndex: 10,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: '20px',
       }}>
         <img src={logo} alt="Logo" style={{
           maxWidth: '150px',
-          maxHeight: '150px',
+          maxHeight: '100px',
         }} />
       </div>
-      {renderColumn("Affirmative", affrimativeParticipants)}
+      <div style={{
+        display: 'flex',
+        flex: 1,
+      }}>
+        {renderColumn("Negative", negativeParticipants)}
+        {renderColumn("Judge", judgeParticipants)}
+        {renderColumn("Affirmative", affrimativeParticipants)}
+      </div>
       <DyteParticipantsAudio meeting={meeting} />
     </main>
   );
