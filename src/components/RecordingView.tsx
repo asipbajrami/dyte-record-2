@@ -27,7 +27,7 @@ export default function RecordingView() {
   );
 
   useEffect(() => {
-
+    // Any side effects can be added here
   }, []);
 
   const renderColumn = (title: string, participants: any[]) => (
@@ -60,11 +60,23 @@ export default function RecordingView() {
         position: "relative",
         width: "100vw",
         height: "100vh",
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        backgroundColor: '#0000',
       }}
     >
       {renderColumn("Negative", negativeParticipants)}
       {renderColumn("Judge", judgeParticipants)}
+      <div style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        zIndex: 10,
+      }}>
+        <img src="/assets/logo.png" alt="Logo" style={{
+          maxWidth: '150px',
+          maxHeight: '150px',
+        }} />
+      </div>
       {renderColumn("Affirmative", affrimativeParticipants)}
       <DyteParticipantsAudio meeting={meeting} />
     </main>
