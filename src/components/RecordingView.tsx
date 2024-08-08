@@ -3,6 +3,7 @@ import {
   DyteSimpleGrid,
 } from "@dytesdk/react-ui-kit";
 import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core";
+import { useEffect } from "react";
 import logo from '../assets/logo.png'; // Import the logo
 
 const AFFIRMATIVE = "affirmative";
@@ -26,12 +27,20 @@ export default function RecordingView() {
     (participant) => participant.presetName === JUDGE
   );
 
-  const renderParticipantGrid = (participants: any[], gridStyle: React.CSSProperties) => (
-    <DyteSimpleGrid
-      participants={participants}
-      meeting={meeting}
-      style={gridStyle}
-    />
+  const renderParticipantColumn = (participants: any[], columnStyle: React.CSSProperties) => (
+    <div style={columnStyle}>
+      {participants.map((participant, index) => (
+        <DyteSimpleGrid
+          key={participant.id}
+          participants={[participant]}
+          meeting={meeting}
+          style={{
+            height: `${100 / participants.length}%`,
+            marginBottom: index < participants.length - 1 ? '10px' : '0',
+          }}
+        />
+      ))}
+    </div>
   );
 
   return (
@@ -54,13 +63,23 @@ export default function RecordingView() {
 
       <div style={{ display: 'flex', flex: 1 }}>
         {/* Negative Column */}
-        <div style={{ width: '33.33%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          {renderParticipantGrid(negativeParticipants, { height: '40%' })}
-        </div>
+        {renderParticipantColumn(negativeParticipants, { 
+          width: '33.33%', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          justifyContent: 'flex-start',
+          padding: '0 10px'
+        })}
 
         {/* Center Column with Judges and Logo */}
-        <div style={{ width: '33.33%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          {judgeParticipants[0] && renderParticipantGrid([judgeParticipants[0]], { height: '40%' })}
+        <div style={{ width: '33.33%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '0 10px' }}>
+          {judgeParticipants[0] && (
+            <DyteSimpleGrid
+              participants={[judgeParticipants[0]]}
+              meeting={meeting}
+              style={{ height: '40%' }}
+            />
+          )}
           <div style={{ 
             flex: 1, 
             display: 'flex', 
@@ -68,18 +87,28 @@ export default function RecordingView() {
             alignItems: 'center'
           }}>
             <img src={logo} alt="Logo" style={{
-              maxWidth: '50%',
-              maxHeight: '50%',
+              maxWidth: '40%',
+              maxHeight: '40%',
               objectFit: 'contain'
             }} />
           </div>
-          {judgeParticipants[1] && renderParticipantGrid([judgeParticipants[1]], { height: '40%' })}
+          {judgeParticipants[1] && (
+            <DyteSimpleGrid
+              participants={[judgeParticipants[1]]}
+              meeting={meeting}
+              style={{ height: '40%' }}
+            />
+          )}
         </div>
 
         {/* Affirmative Column */}
-        <div style={{ width: '33.33%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          {renderParticipantGrid(affirmativeParticipants, { height: '40%' })}
-        </div>
+        {renderParticipantColumn(affirmativeParticipants, { 
+          width: '33.33%', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          justifyContent: 'flex-start',
+          padding: '0 10px'
+        })}
       </div>
       <DyteParticipantsAudio meeting={meeting} />
     </main>
