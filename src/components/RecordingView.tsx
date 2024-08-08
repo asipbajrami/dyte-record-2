@@ -4,7 +4,7 @@ import {
   DyteSimpleGrid,
 } from "@dytesdk/react-ui-kit";
 import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core";
-import { DyteMeeting, DyteParticipant } from '@dytesdk/web-core';
+import { DyteParticipant } from '@dytesdk/web-core';
 import logo from '../assets/logo.png';
 
 const AFFIRMATIVE = "affirmative";
@@ -17,7 +17,7 @@ export default function RecordingView() {
   const [negativeParticipants, setNegativeParticipants] = useState<DyteParticipant[]>([]);
   const [judgeParticipants, setJudgeParticipants] = useState<DyteParticipant[]>([]);
 
-  const joinedParticipants = useDyteSelector((meeting: DyteMeeting) =>
+  const joinedParticipants = useDyteSelector((meeting) =>
     meeting.participants.joined.toArray()
   );
 
