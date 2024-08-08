@@ -3,7 +3,6 @@ import {
   DyteSimpleGrid,
 } from "@dytesdk/react-ui-kit";
 import { useDyteMeeting, useDyteSelector } from "@dytesdk/react-web-core";
-import { useEffect } from "react";
 import logo from '../assets/logo.png'; // Import the logo
 
 const AFFIRMATIVE = "affirmative";
