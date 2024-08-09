@@ -11,6 +11,7 @@ const AFFIRMATIVE = "affirmative";
 const NEGATIVE = "negative";
 const JUDGE = "judge";
 
+
 export default function RecordingView() {
   const { meeting } = useDyteMeeting();
   const [participants, setParticipants] = useState<DyteParticipant[]>([]);
