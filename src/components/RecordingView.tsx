@@ -64,15 +64,27 @@ export default function RecordingView() {
           <div key={participant.id} style={{
             height: `${100 / presetParticipants.length}%`,
             marginBottom: index < presetParticipants.length - 1 ? '10px' : '0',
-            border: `2px solid ${presetColors[presetName]}`,
             borderRadius: '8px',
             overflow: 'hidden',
+            position: 'relative',
           }}>
             <DyteSimpleGrid
               participants={[participant]}
               meeting={meeting}
               style={{ height: '100%' }}
             />
+            <div style={{
+              position: 'absolute',
+              bottom: '10px',
+              left: '10px',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              padding: '5px 10px',
+              borderRadius: '4px',
+              fontSize: '14px',
+              color: presetColors[presetName],
+            }}>
+              {participant.name}
+            </div>
           </div>
         ))}
       </div>
@@ -113,36 +125,33 @@ export default function RecordingView() {
           padding: '10px',
           position: 'relative'
         }}>
-          {judgeParticipants[0] && (
-            <div style={{
+          {judgeParticipants.map((participant, index) => (
+            <div key={participant.id} style={{
               height: '40%',
-              border: `2px solid ${presetColors[JUDGE]}`,
               borderRadius: '8px',
               overflow: 'hidden',
-              marginBottom: '10px'
+              marginBottom: index === 0 ? '10px' : '0',
+              position: 'relative',
             }}>
               <DyteSimpleGrid
-                participants={[judgeParticipants[0]]}
+                participants={[participant]}
                 meeting={meeting}
                 style={{ height: '100%' }}
               />
+              <div style={{
+                position: 'absolute',
+                bottom: '10px',
+                left: '10px',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                padding: '5px 10px',
+                borderRadius: '4px',
+                fontSize: '14px',
+                color: presetColors[JUDGE],
+              }}>
+                {participant.name}
+              </div>
             </div>
-          )}
-          {judgeParticipants[1] && (
-            <div style={{
-              height: '40%',
-              border: `2px solid ${presetColors[JUDGE]}`,
-              borderRadius: '8px',
-              overflow: 'hidden',
-              marginTop: '10px'
-            }}>
-              <DyteSimpleGrid
-                participants={[judgeParticipants[1]]}
-                meeting={meeting}
-                style={{ height: '100%' }}
-              />
-            </div>
-          )}
+          ))}
         </div>
 
         {/* Affirmative Column */}
