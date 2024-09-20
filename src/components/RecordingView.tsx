@@ -16,9 +16,9 @@ const JUDGE = 'judge';
 type PresetName = typeof AFFIRMATIVE | typeof NEGATIVE | typeof JUDGE;
 
 const presetColors: { [key in PresetName]: string } = {
-  [AFFIRMATIVE]: '#4a90e2', // Blue
-  [NEGATIVE]: '#e57373',    // Red
-  [JUDGE]: '#ffd54f',       // Yellow
+  [AFFIRMATIVE]: '#043B6D', // Blue
+  [NEGATIVE]: '#641316',    // Red
+  [JUDGE]: '#0D0B0E',      // Black 
 };
 
 export default function RecordingView() {
