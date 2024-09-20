@@ -18,7 +18,7 @@ type PresetName = typeof AFFIRMATIVE | typeof NEGATIVE | typeof JUDGE;
 const presetColors: { [key in PresetName]: string } = {
   [AFFIRMATIVE]: '#4a90e2', // Blue
   [NEGATIVE]: '#e57373',    // Red
-  [JUDGE]: '#ffd54f',       // Yellow
+  [JUDGE]: '#000000',       // Yellow
 };
 
 export default function RecordingView() {
@@ -63,39 +63,44 @@ export default function RecordingView() {
       <div
         style={{
           ...columnStyle,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          overflowY: 'auto',
+          display: 'grid',
+          gridTemplateRows: `repeat(${presetParticipants.length}, 1fr)`,
+          gap: '10px',
         }}
       >
         {presetParticipants.map((participant) => (
           <div
             key={participant.id}
             style={{
-              width: '250px', // Fixed width
-              height: '180px', // Fixed height
+              width: '100%',
+              position: 'relative',
               borderRadius: '8px',
               overflow: 'hidden',
-              position: 'relative',
-              margin: '10px 0',
             }}
           >
-            <DyteParticipantTile
-              participant={participant}
-              meeting={meeting}
-              style={{ height: '100%', width: '100%' }}
-            >
-              <DyteNameTag
+            <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%' /* 16:9 aspect ratio */ }}>
+              <DyteParticipantTile
                 participant={participant}
+                meeting={meeting}
                 style={{
-                  backgroundColor: presetColors[presetName],
-                  color: 'white',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
                 }}
               >
-                <DyteAudioVisualizer slot="start" />
-              </DyteNameTag>
-            </DyteParticipantTile>
+                <DyteNameTag
+                  participant={participant}
+                  style={{
+                    backgroundColor: presetColors[presetName],
+                    color: 'white',
+                  }}
+                >
+                  <DyteAudioVisualizer slot="start" />
+                </DyteNameTag>
+              </DyteParticipantTile>
+            </div>
           </div>
         ))}
       </div>
@@ -113,7 +118,7 @@ export default function RecordingView() {
         height: '100vh',
         backgroundColor: '#000',
         color: 'white',
-        overflow: 'hidden', // Prevents the page from scrolling
+        overflow: 'hidden',
       }}
     >
       <div
@@ -134,41 +139,46 @@ export default function RecordingView() {
         <div
           style={{
             width: '33.33%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            display: 'grid',
+            gridTemplateRows: `repeat(${judgeParticipants.length}, 1fr)`,
+            gap: '10px',
             padding: '10px',
             position: 'relative',
-            overflowY: 'auto',
           }}
         >
           {judgeParticipants.map((participant) => (
             <div
               key={participant.id}
               style={{
-                width: '250px',
-                height: '180px',
+                width: '100%',
+                position: 'relative',
                 borderRadius: '8px',
                 overflow: 'hidden',
-                position: 'relative',
-                margin: '10px 0',
               }}
             >
-              <DyteParticipantTile
-                participant={participant}
-                meeting={meeting}
-                style={{ height: '100%', width: '100%' }}
-              >
-                <DyteNameTag
+              <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%' }}>
+                <DyteParticipantTile
                   participant={participant}
+                  meeting={meeting}
                   style={{
-                    backgroundColor: presetColors[JUDGE],
-                    color: 'white',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
                   }}
                 >
-                  <DyteAudioVisualizer slot="start" />
-                </DyteNameTag>
-              </DyteParticipantTile>
+                  <DyteNameTag
+                    participant={participant}
+                    style={{
+                      backgroundColor: presetColors[JUDGE],
+                      color: 'white',
+                    }}
+                  >
+                    <DyteAudioVisualizer slot="start" />
+                  </DyteNameTag>
+                </DyteParticipantTile>
+              </div>
             </div>
           ))}
         </div>
