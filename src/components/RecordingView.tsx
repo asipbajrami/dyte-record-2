@@ -65,10 +65,16 @@ export default function RecordingView() {
             overflow: 'hidden',
             position: 'relative',
           }}>
-            {/* Custom DyteParticipantTile with your DyteNameTag */}
+            {/* DyteParticipantTile with custom DyteNameTag */}
             <DyteParticipantTile participant={participant} meeting={meeting} style={{ height: '100%' }}>
-            <DyteNameTag participant={participant} style={{ backgroundColor: 'red', color: 'white' }}>
-            <DyteAudioVisualizer slot="start" />
+              <DyteNameTag
+                participant={participant}
+                style={{
+                  backgroundColor: presetColors[presetName], // Set background color based on the preset
+                  color: 'white', // Text color for contrast
+                }}
+              >
+                <DyteAudioVisualizer slot="start" />
               </DyteNameTag>
             </DyteParticipantTile>
           </div>
@@ -118,8 +124,14 @@ export default function RecordingView() {
               position: 'relative',
             }}>
               <DyteParticipantTile participant={participant} meeting={meeting} style={{ height: '100%' }}>
-              <DyteNameTag participant={participant} style={{ backgroundColor: 'red', color: 'white' }}>
-              <DyteAudioVisualizer slot="start" />
+                <DyteNameTag
+                  participant={participant}
+                  style={{
+                    backgroundColor: presetColors[JUDGE], // Use judge color
+                    color: 'white',
+                  }}
+                >
+                  <DyteAudioVisualizer slot="start" />
                 </DyteNameTag>
               </DyteParticipantTile>
             </div>
