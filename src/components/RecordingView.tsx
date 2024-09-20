@@ -4,6 +4,7 @@ import {
   DyteParticipantTile,
   DyteNameTag,
   DyteAudioVisualizer,
+  DyteControlbar,
 } from '@dytesdk/react-ui-kit';
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core';
 import { DyteParticipant } from '@dytesdk/web-core';
@@ -18,7 +19,7 @@ type PresetName = typeof AFFIRMATIVE | typeof NEGATIVE | typeof JUDGE;
 const presetColors: { [key in PresetName]: string } = {
   [AFFIRMATIVE]: '#4a90e2', // Blue
   [NEGATIVE]: '#e57373',    // Red
-  [JUDGE]: '#000000',       // Yellow
+  [JUDGE]: '#ffd54f',       // Yellow
 };
 
 export default function RecordingView() {
@@ -44,12 +45,20 @@ export default function RecordingView() {
     meeting.participants.joined.on('participantLeft', handleParticipantLeave);
 
     return () => {
-      meeting.participants.joined.off('participantJoined', handleParticipantJoin);
-      meeting.participants.joined.off('participantLeft', handleParticipantLeave);
+      meeting.participants.joined.off(
+        'participantJoined',
+        handleParticipantJoin
+      );
+      meeting.participants.joined.off(
+        'participantLeft',
+        handleParticipantLeave
+      );
     };
   }, [meeting, joinedParticipants]);
 
-  const getParticipantsByPreset = (presetName: PresetName): DyteParticipant[] => {
+  const getParticipantsByPreset = (
+    presetName: PresetName
+  ): DyteParticipant[] => {
     return participants.filter((p) => p.presetName === presetName);
   };
 
@@ -78,7 +87,13 @@ export default function RecordingView() {
               overflow: 'hidden',
             }}
           >
-            <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%' /* 16:9 aspect ratio */ }}>
+            <div
+              style={{
+                position: 'relative',
+                width: '100%',
+                paddingTop: '56.25%', // 16:9 aspect ratio
+              }}
+            >
               <DyteParticipantTile
                 participant={participant}
                 meeting={meeting}
@@ -99,6 +114,8 @@ export default function RecordingView() {
                 >
                   <DyteAudioVisualizer slot="start" />
                 </DyteNameTag>
+                {/* Remove participant prop from DyteControlbar */}
+                <DyteControlbar slot="controlbar" />
               </DyteParticipantTile>
             </div>
           </div>
@@ -156,7 +173,13 @@ export default function RecordingView() {
                 overflow: 'hidden',
               }}
             >
-              <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%' }}>
+              <div
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  paddingTop: '56.25%',
+                }}
+              >
                 <DyteParticipantTile
                   participant={participant}
                   meeting={meeting}
@@ -177,6 +200,8 @@ export default function RecordingView() {
                   >
                     <DyteAudioVisualizer slot="start" />
                   </DyteNameTag>
+                  {/* Remove participant prop from DyteControlbar */}
+                  <DyteControlbar slot="controlbar" />
                 </DyteParticipantTile>
               </div>
             </div>
