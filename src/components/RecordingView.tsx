@@ -13,14 +13,14 @@ const AFFIRMATIVE = 'affirmative';
 const NEGATIVE = 'negative';
 const JUDGE = 'judge';
 
-// Add this type definition
+// Define the PresetName type
 type PresetName = typeof AFFIRMATIVE | typeof NEGATIVE | typeof JUDGE;
 
-// const presetColors: { [key in PresetName]: string } = {
-//   [AFFIRMATIVE]: '#4a90e2', // Blue
-//   [NEGATIVE]: '#e57373',    // Red
-//   [JUDGE]: '#ffd54f',       // Yellow
-// };
+const presetColors: { [key in PresetName]: string } = {
+  [AFFIRMATIVE]: '#4a90e2', // Blue
+  [NEGATIVE]: '#e57373',    // Red
+  [JUDGE]: '#000',       // Yellow
+};
 
 export default function RecordingView() {
   const { meeting } = useDyteMeeting();
@@ -62,11 +62,13 @@ export default function RecordingView() {
     return participants.filter((p) => p.presetName === presetName);
   };
 
-  // Updated ParticipantTile component
+  // Updated ParticipantTile component with presetName
   const ParticipantTile = ({
     participant,
+    presetName,
   }: {
     participant: DyteParticipant;
+    presetName: PresetName;
   }) => {
     return (
       <div
@@ -103,7 +105,7 @@ export default function RecordingView() {
                 position: 'absolute',
                 bottom: '0',
                 width: '100%',
-                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                backgroundColor: presetColors[presetName], // Use preset color here
                 color: 'white',
                 padding: '5px',
                 display: 'flex',
@@ -144,7 +146,11 @@ export default function RecordingView() {
         }}
       >
         {presetParticipants.map((participant) => (
-          <ParticipantTile key={participant.id} participant={participant} />
+          <ParticipantTile
+            key={participant.id}
+            participant={participant}
+            presetName={presetName} // Pass presetName here
+          />
         ))}
       </div>
     );
@@ -190,7 +196,11 @@ export default function RecordingView() {
           }}
         >
           {judgeParticipants.map((participant) => (
-            <ParticipantTile key={participant.id} participant={participant} />
+            <ParticipantTile
+              key={participant.id}
+              participant={participant}
+              presetName={JUDGE} // Pass presetName here
+            />
           ))}
         </div>
 
