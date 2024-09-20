@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   DyteParticipantsAudio,
-  DyteSimpleGrid,
+  DyteParticipantTile,
   DyteNameTag,
   DyteAudioVisualizer,
 } from "@dytesdk/react-ui-kit";
@@ -30,16 +30,13 @@ export default function RecordingView() {
   );
 
   useEffect(() => {
-    console.log("Joined participants changed:", joinedParticipants);
     setParticipants(joinedParticipants);
 
     const handleParticipantJoin = (participant: DyteParticipant) => {
-      console.log("Participant joined:", participant);
       setParticipants(prev => [...prev, participant]);
     };
 
     const handleParticipantLeave = (participant: DyteParticipant) => {
-      console.log("Participant left:", participant);
       setParticipants(prev => prev.filter(p => p.id !== participant.id));
     };
 
@@ -53,9 +50,7 @@ export default function RecordingView() {
   }, [meeting, joinedParticipants]);
 
   const getParticipantsByPreset = (presetName: PresetName): DyteParticipant[] => {
-    const filteredParticipants = participants.filter(p => p.presetName === presetName);
-    console.log(`Participants for ${presetName}:`, filteredParticipants);
-    return filteredParticipants;
+    return participants.filter(p => p.presetName === presetName);
   };
 
   const renderParticipantColumn = (presetName: PresetName, columnStyle: React.CSSProperties) => {
@@ -70,26 +65,12 @@ export default function RecordingView() {
             overflow: 'hidden',
             position: 'relative',
           }}>
-            <DyteSimpleGrid
-              participants={[participant]}
-              meeting={meeting}
-              style={{ height: '100%' }}
-            />
-            <div style={{
-              position: 'absolute',
-              bottom: '10px',
-              left: '10px',
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              padding: '5px 10px',
-              borderRadius: '4px',
-              fontSize: '14px',
-              color: presetColors[presetName],
-            }}>
-              {/* Add the DyteNameTag and DyteAudioVisualizer */}
-              <DyteNameTag participant={participant} style={{ backgroundColor: 'red', color: 'white' }}>
-              <DyteAudioVisualizer slot="start" />
+            {/* Custom DyteParticipantTile with your DyteNameTag */}
+            <DyteParticipantTile participant={participant} meeting={meeting} style={{ height: '100%' }}>
+            <DyteNameTag participant={participant} style={{ backgroundColor: 'red', color: 'white' }}>
+            <DyteAudioVisualizer slot="start" />
               </DyteNameTag>
-            </div>
+            </DyteParticipantTile>
           </div>
         ))}
       </div>
@@ -136,25 +117,11 @@ export default function RecordingView() {
               marginBottom: index === 0 ? '10px' : '0',
               position: 'relative',
             }}>
-              <DyteSimpleGrid
-                participants={[participant]}
-                meeting={meeting}
-                style={{ height: '100%' }}
-              />
-              <div style={{
-                position: 'absolute',
-                bottom: '10px',
-                left: '10px',
-                backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                padding: '5px 10px',
-                borderRadius: '4px',
-                fontSize: '14px',
-                color: presetColors[JUDGE],
-              }}>
-                <DyteNameTag participant={participant} style={{ backgroundColor: 'red', color: 'white' }}>
-                  <DyteAudioVisualizer slot="start" />
+              <DyteParticipantTile participant={participant} meeting={meeting} style={{ height: '100%' }}>
+              <DyteNameTag participant={participant} style={{ backgroundColor: 'red', color: 'white' }}>
+              <DyteAudioVisualizer slot="start" />
                 </DyteNameTag>
-              </div>
+              </DyteParticipantTile>
             </div>
           ))}
         </div>
