@@ -18,7 +18,7 @@ type PresetName = typeof AFFIRMATIVE | typeof NEGATIVE | typeof JUDGE;
 const presetColors: { [key in PresetName]: string } = {
   [AFFIRMATIVE]: '#4a90e2', // Blue
   [NEGATIVE]: '#e57373',    // Red
-  [JUDGE]: '#000000',       // Yellow
+  [JUDGE]: '#ffd54f',       // Yellow
 };
 
 export default function RecordingView() {
@@ -55,21 +55,22 @@ export default function RecordingView() {
 
   const renderParticipantColumn = (presetName: PresetName, columnStyle: React.CSSProperties) => {
     const presetParticipants = getParticipantsByPreset(presetName);
-    const totalParticipants = presetParticipants.length;
 
     return (
       <div style={columnStyle}>
         {presetParticipants.map((participant, index) => (
           <div key={participant.id} style={{
-            height: totalParticipants > 1 ? `${100 / totalParticipants}%` : '50%', // Set max height if only one participant
-            marginBottom: index < presetParticipants.length - 1 ? '10px' : '0',
+            flex: '1 1 100%', // Allow items to wrap and take equal width in their row
+            display: 'flex',
+            flexDirection: 'column',
             borderRadius: '8px',
             overflow: 'hidden',
+            maxWidth: '100%', // Ensure that the tile doesn't exceed the container's width
             position: 'relative',
-            maxHeight: '400px', // Prevents the participant from becoming too large
+            margin: '5px',
           }}>
             {/* DyteParticipantTile with custom DyteNameTag */}
-            <DyteParticipantTile participant={participant} meeting={meeting} style={{ height: '100%' }}>
+            <DyteParticipantTile participant={participant} meeting={meeting} style={{ height: '100%', width: '100%' }}>
               <DyteNameTag
                 participant={participant}
                 style={{
@@ -105,7 +106,9 @@ export default function RecordingView() {
           width: '33.33%', 
           display: 'flex', 
           flexDirection: 'column', 
+          flexWrap: 'wrap', // Enable wrapping of participants within the column
           justifyContent: 'space-evenly',
+          alignItems: 'center',
           padding: '10px'
         })}
 
@@ -114,19 +117,22 @@ export default function RecordingView() {
           width: '33.33%', 
           display: 'flex', 
           flexDirection: 'column', 
+          flexWrap: 'wrap', // Enable wrapping of participants within the column
           justifyContent: 'space-between', 
+          alignItems: 'center',
           padding: '10px',
           position: 'relative'
         }}>
           {judgeParticipants.map((participant, index) => (
             <div key={participant.id} style={{
-              height: '40%',
+              flex: '1 1 100%', // Ensure items take up equal space
+              maxWidth: '100%',
               borderRadius: '8px',
               overflow: 'hidden',
-              marginBottom: index === 0 ? '10px' : '0',
               position: 'relative',
+              margin: '5px',
             }}>
-              <DyteParticipantTile participant={participant} meeting={meeting} style={{ height: '100%' }}>
+              <DyteParticipantTile participant={participant} meeting={meeting} style={{ height: '100%', width: '100%' }}>
                 <DyteNameTag
                   participant={participant}
                   style={{
@@ -146,7 +152,9 @@ export default function RecordingView() {
           width: '33.33%', 
           display: 'flex', 
           flexDirection: 'column', 
+          flexWrap: 'wrap', // Enable wrapping of participants within the column
           justifyContent: 'space-evenly',
+          alignItems: 'center',
           padding: '10px'
         })}
 
