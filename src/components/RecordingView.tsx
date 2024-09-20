@@ -100,11 +100,7 @@ export default function RecordingView() {
               }}
             >
               {/* Audio Visualizer */}
-              <DyteAudioVisualizer slot="start" />
-              {/* Mic Toggle for local participant */}
-              {participant.id === meeting.self.id ? (
-                <DyteMicToggle slot="end" size="sm" meeting={meeting} />
-              ) : null}
+              <DyteAudioVisualizer participant={participant} slot="start" />
             </DyteNameTag>
           </DyteParticipantTile>
         </div>
