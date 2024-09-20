@@ -19,7 +19,7 @@ type PresetName = typeof AFFIRMATIVE | typeof NEGATIVE | typeof JUDGE;
 const presetColors: { [key in PresetName]: string } = {
   [AFFIRMATIVE]: '#4a90e2', // Blue
   [NEGATIVE]: '#e57373',    // Red
-  [JUDGE]: '#000',       // Yellow
+  [JUDGE]: '#000000',       // Yellow
 };
 
 export default function RecordingView() {
@@ -62,7 +62,7 @@ export default function RecordingView() {
     return participants.filter((p) => p.presetName === presetName);
   };
 
-  // Updated ParticipantTile component with presetName
+  // Updated ParticipantTile component with custom name tag
   const ParticipantTile = ({
     participant,
     presetName,
@@ -98,14 +98,13 @@ export default function RecordingView() {
               height: '100%',
             }}
           >
-            {/* Custom overlay */}
+            {/* Custom Name Tag */}
             <div
-              slot="overlay"
               style={{
                 position: 'absolute',
                 bottom: '0',
                 width: '100%',
-                backgroundColor: presetColors[presetName], // Use preset color here
+                backgroundColor: presetColors[presetName],
                 color: 'white',
                 padding: '5px',
                 display: 'flex',
@@ -113,7 +112,7 @@ export default function RecordingView() {
                 justifyContent: 'space-between',
               }}
             >
-              {/* Display participant's name directly */}
+              {/* Display participant's name */}
               <div>{participant.name}</div>
               {participant.id === meeting.self.id ? (
                 <DyteMicToggle size="sm" meeting={meeting} />
@@ -149,7 +148,7 @@ export default function RecordingView() {
           <ParticipantTile
             key={participant.id}
             participant={participant}
-            presetName={presetName} // Pass presetName here
+            presetName={presetName}
           />
         ))}
       </div>
@@ -199,7 +198,7 @@ export default function RecordingView() {
             <ParticipantTile
               key={participant.id}
               participant={participant}
-              presetName={JUDGE} // Pass presetName here
+              presetName={JUDGE}
             />
           ))}
         </div>
