@@ -58,7 +58,7 @@ export default function RecordingView() {
 
     return (
       <div style={columnStyle}>
-        {presetParticipants.map((participant, index) => (
+        {presetParticipants.map((participant) => (
           <div key={participant.id} style={{
             flex: '1 1 100%', // Allow items to wrap and take equal width in their row
             display: 'flex',
@@ -123,7 +123,7 @@ export default function RecordingView() {
           padding: '10px',
           position: 'relative'
         }}>
-          {judgeParticipants.map((participant, index) => (
+          {judgeParticipants.map((participant) => (
             <div key={participant.id} style={{
               flex: '1 1 100%', // Ensure items take up equal space
               maxWidth: '100%',
