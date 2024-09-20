@@ -4,8 +4,8 @@ import {
   DyteParticipantTile,
   DyteNameTag,
   DyteAudioVisualizer,
-  DyteMicIndicator,
   DyteMicToggle,
+  DyteIcon,
 } from '@dytesdk/react-ui-kit';
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core';
 import { DyteParticipant } from '@dytesdk/web-core';
@@ -19,8 +19,8 @@ type PresetName = typeof AFFIRMATIVE | typeof NEGATIVE | typeof JUDGE;
 
 const presetColors: { [key in PresetName]: string } = {
   [AFFIRMATIVE]: '#4a90e2', // Blue
-  [NEGATIVE]: '#e57373',    // Red
-  [JUDGE]: '#ffd54f',       // Yellow
+  [NEGATIVE]: '#e57373', // Red
+  [JUDGE]: '#ffd54f', // Yellow
 };
 
 export default function RecordingView() {
@@ -114,13 +114,17 @@ export default function RecordingView() {
                   }}
                 >
                   <DyteAudioVisualizer slot="start" />
-                  {/* Display Mic Indicator or Mic Toggle based on participant */}
+                  {/* Display Mic Toggle for local participant, mic status icon for others */}
                   {participant.id === meeting.self.id ? (
                     // For local participant, show Mic Toggle
                     <DyteMicToggle slot="end" size="sm" meeting={meeting} />
                   ) : (
-                    // For remote participants, show Mic Indicator
-                    <DyteMicIndicator slot="end" participant={participant} />
+                    // For remote participants, show mic status icon
+                    <DyteIcon
+                      slot="end"
+                      icon={participant.audioEnabled ? 'mic' : 'mic_off'}
+                      style={{ color: 'white' }}
+                    />
                   )}
                 </DyteNameTag>
               </DyteParticipantTile>
@@ -206,11 +210,17 @@ export default function RecordingView() {
                     }}
                   >
                     <DyteAudioVisualizer slot="start" />
-                    {/* Display Mic Indicator or Mic Toggle based on participant */}
+                    {/* Display Mic Toggle for local participant, mic status icon for others */}
                     {participant.id === meeting.self.id ? (
+                      // For local participant, show Mic Toggle
                       <DyteMicToggle slot="end" size="sm" meeting={meeting} />
                     ) : (
-                      <DyteMicIndicator slot="end" participant={participant} />
+                      // For remote participants, show mic status icon
+                      <DyteIcon
+                        slot="end"
+                        icon={participant.audioEnabled ? 'mic' : 'mic_off'}
+                        style={{ color: 'white' }}
+                      />
                     )}
                   </DyteNameTag>
                 </DyteParticipantTile>
