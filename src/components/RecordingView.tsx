@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import {
   DyteParticipantsAudio,
   DyteParticipantTile,
+  DyteNameTag,
+  DyteAudioVisualizer,
   DyteMicToggle,
-  DyteIcon,
 } from '@dytesdk/react-ui-kit';
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core';
 import { DyteParticipant } from '@dytesdk/web-core';
@@ -13,13 +14,12 @@ const AFFIRMATIVE = 'affirmative';
 const NEGATIVE = 'negative';
 const JUDGE = 'judge';
 
-// Define the PresetName type
 type PresetName = typeof AFFIRMATIVE | typeof NEGATIVE | typeof JUDGE;
 
 const presetColors: { [key in PresetName]: string } = {
   [AFFIRMATIVE]: '#4a90e2', // Blue
   [NEGATIVE]: '#e57373',    // Red
-  [JUDGE]: '#000000',       // Yellow
+  [JUDGE]: '#ffd54f',       // Yellow
 };
 
 export default function RecordingView() {
@@ -45,14 +45,8 @@ export default function RecordingView() {
     meeting.participants.joined.on('participantLeft', handleParticipantLeave);
 
     return () => {
-      meeting.participants.joined.off(
-        'participantJoined',
-        handleParticipantJoin
-      );
-      meeting.participants.joined.off(
-        'participantLeft',
-        handleParticipantLeave
-      );
+      meeting.participants.joined.off('participantJoined', handleParticipantJoin);
+      meeting.participants.joined.off('participantLeft', handleParticipantLeave);
     };
   }, [meeting, joinedParticipants]);
 
@@ -62,7 +56,7 @@ export default function RecordingView() {
     return participants.filter((p) => p.presetName === presetName);
   };
 
-  // Updated ParticipantTile component with custom name tag
+  // ParticipantTile component with DyteNameTag and DyteAudioVisualizer
   const ParticipantTile = ({
     participant,
     presetName,
@@ -98,31 +92,20 @@ export default function RecordingView() {
               height: '100%',
             }}
           >
-            {/* Custom Name Tag */}
-            <div
+            <DyteNameTag
+              participant={participant}
               style={{
-                position: 'absolute',
-                bottom: '0',
-                width: '100%',
                 backgroundColor: presetColors[presetName],
                 color: 'white',
-                padding: '5px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
               }}
             >
-              {/* Display participant's name */}
-              <div>{participant.name}</div>
+              {/* Audio Visualizer */}
+              <DyteAudioVisualizer slot="start" />
+              {/* Mic Toggle for local participant */}
               {participant.id === meeting.self.id ? (
-                <DyteMicToggle size="sm" meeting={meeting} />
-              ) : (
-                <DyteIcon
-                  icon={participant.audioEnabled ? 'mic' : 'mic_off'}
-                  style={{ color: 'white' }}
-                />
-              )}
-            </div>
+                <DyteMicToggle slot="end" size="sm" meeting={meeting} />
+              ) : null}
+            </DyteNameTag>
           </DyteParticipantTile>
         </div>
       </div>
