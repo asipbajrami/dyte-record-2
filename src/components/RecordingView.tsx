@@ -4,7 +4,8 @@ import {
   DyteParticipantTile,
   DyteNameTag,
   DyteAudioVisualizer,
-  DyteControlbar,
+  DyteMicIndicator,
+  DyteMicToggle,
 } from '@dytesdk/react-ui-kit';
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core';
 import { DyteParticipant } from '@dytesdk/web-core';
@@ -113,9 +114,15 @@ export default function RecordingView() {
                   }}
                 >
                   <DyteAudioVisualizer slot="start" />
+                  {/* Display Mic Indicator or Mic Toggle based on participant */}
+                  {participant.id === meeting.self.id ? (
+                    // For local participant, show Mic Toggle
+                    <DyteMicToggle slot="end" size="sm" meeting={meeting} />
+                  ) : (
+                    // For remote participants, show Mic Indicator
+                    <DyteMicIndicator slot="end" participant={participant} />
+                  )}
                 </DyteNameTag>
-                {/* Remove participant prop from DyteControlbar */}
-                <DyteControlbar slot="controlbar" />
               </DyteParticipantTile>
             </div>
           </div>
@@ -199,9 +206,13 @@ export default function RecordingView() {
                     }}
                   >
                     <DyteAudioVisualizer slot="start" />
+                    {/* Display Mic Indicator or Mic Toggle based on participant */}
+                    {participant.id === meeting.self.id ? (
+                      <DyteMicToggle slot="end" size="sm" meeting={meeting} />
+                    ) : (
+                      <DyteMicIndicator slot="end" participant={participant} />
+                    )}
                   </DyteNameTag>
-                  {/* Remove participant prop from DyteControlbar */}
-                  <DyteControlbar slot="controlbar" />
                 </DyteParticipantTile>
               </div>
             </div>
