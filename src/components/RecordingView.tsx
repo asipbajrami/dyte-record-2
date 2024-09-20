@@ -20,7 +20,7 @@ type PresetName = typeof AFFIRMATIVE | typeof NEGATIVE | typeof JUDGE;
 const presetColors: { [key in PresetName]: string } = {
   [AFFIRMATIVE]: '#4a90e2', // Blue
   [NEGATIVE]: '#e57373', // Red
-  [JUDGE]: '#ffd54f', // Yellow
+  [JUDGE]: '#000', // Yellow
 };
 
 export default function RecordingView() {
@@ -46,14 +46,8 @@ export default function RecordingView() {
     meeting.participants.joined.on('participantLeft', handleParticipantLeave);
 
     return () => {
-      meeting.participants.joined.off(
-        'participantJoined',
-        handleParticipantJoin
-      );
-      meeting.participants.joined.off(
-        'participantLeft',
-        handleParticipantLeave
-      );
+      meeting.participants.joined.off('participantJoined', handleParticipantJoin);
+      meeting.participants.joined.off('participantLeft', handleParticipantLeave);
     };
   }, [meeting, joinedParticipants]);
 
@@ -61,6 +55,84 @@ export default function RecordingView() {
     presetName: PresetName
   ): DyteParticipant[] => {
     return participants.filter((p) => p.presetName === presetName);
+  };
+
+  // Create a separate component for ParticipantTile
+  const ParticipantTile = ({
+    participant,
+    presetName,
+  }: {
+    participant: DyteParticipant;
+    presetName: PresetName;
+  }) => {
+    const [audioEnabled, setAudioEnabled] = useState(participant.audioEnabled);
+
+    useEffect(() => {
+      const handleAudioUpdate = () => {
+        setAudioEnabled(participant.audioEnabled);
+      };
+
+      // Listen for audio updates
+      participant.on('audioUpdate', handleAudioUpdate);
+
+      return () => {
+        participant.off('audioUpdate', handleAudioUpdate);
+      };
+    }, [participant]);
+
+    return (
+      <div
+        key={participant.id}
+        style={{
+          width: '100%',
+          position: 'relative',
+          borderRadius: '8px',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            paddingTop: '56.25%', // 16:9 aspect ratio
+          }}
+        >
+          <DyteParticipantTile
+            participant={participant}
+            meeting={meeting}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+            }}
+          >
+            <DyteNameTag
+              participant={participant}
+              style={{
+                backgroundColor: presetColors[presetName],
+                color: 'white',
+              }}
+            >
+              <DyteAudioVisualizer slot="start" />
+              {/* Display Mic Toggle for local participant, mic status icon for others */}
+              {participant.id === meeting.self.id ? (
+                // For local participant, show Mic Toggle
+                <DyteMicToggle slot="end" size="sm" meeting={meeting} />
+              ) : (
+                // For remote participants, show mic status icon
+                <DyteIcon
+                  slot="end"
+                  icon={audioEnabled ? 'mic' : 'mic_off'}
+                  style={{ color: 'white' }}
+                />
+              )}
+            </DyteNameTag>
+          </DyteParticipantTile>
+        </div>
+      </div>
+    );
   };
 
   const renderParticipantColumn = (
@@ -79,57 +151,11 @@ export default function RecordingView() {
         }}
       >
         {presetParticipants.map((participant) => (
-          <div
+          <ParticipantTile
             key={participant.id}
-            style={{
-              width: '100%',
-              position: 'relative',
-              borderRadius: '8px',
-              overflow: 'hidden',
-            }}
-          >
-            <div
-              style={{
-                position: 'relative',
-                width: '100%',
-                paddingTop: '56.25%', // 16:9 aspect ratio
-              }}
-            >
-              <DyteParticipantTile
-                participant={participant}
-                meeting={meeting}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                }}
-              >
-                <DyteNameTag
-                  participant={participant}
-                  style={{
-                    backgroundColor: presetColors[presetName],
-                    color: 'white',
-                  }}
-                >
-                  <DyteAudioVisualizer slot="start" />
-                  {/* Display Mic Toggle for local participant, mic status icon for others */}
-                  {participant.id === meeting.self.id ? (
-                    // For local participant, show Mic Toggle
-                    <DyteMicToggle slot="end" size="sm" meeting={meeting} />
-                  ) : (
-                    // For remote participants, show mic status icon
-                    <DyteIcon
-                      slot="end"
-                      icon={participant.audioEnabled ? 'mic' : 'mic_off'}
-                      style={{ color: 'white' }}
-                    />
-                  )}
-                </DyteNameTag>
-              </DyteParticipantTile>
-            </div>
-          </div>
+            participant={participant}
+            presetName={presetName}
+          />
         ))}
       </div>
     );
@@ -175,57 +201,11 @@ export default function RecordingView() {
           }}
         >
           {judgeParticipants.map((participant) => (
-            <div
+            <ParticipantTile
               key={participant.id}
-              style={{
-                width: '100%',
-                position: 'relative',
-                borderRadius: '8px',
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  position: 'relative',
-                  width: '100%',
-                  paddingTop: '56.25%',
-                }}
-              >
-                <DyteParticipantTile
-                  participant={participant}
-                  meeting={meeting}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                  }}
-                >
-                  <DyteNameTag
-                    participant={participant}
-                    style={{
-                      backgroundColor: presetColors[JUDGE],
-                      color: 'white',
-                    }}
-                  >
-                    <DyteAudioVisualizer slot="start" />
-                    {/* Display Mic Toggle for local participant, mic status icon for others */}
-                    {participant.id === meeting.self.id ? (
-                      // For local participant, show Mic Toggle
-                      <DyteMicToggle slot="end" size="sm" meeting={meeting} />
-                    ) : (
-                      // For remote participants, show mic status icon
-                      <DyteIcon
-                        slot="end"
-                        icon={participant.audioEnabled ? 'mic' : 'mic_off'}
-                        style={{ color: 'white' }}
-                      />
-                    )}
-                  </DyteNameTag>
-                </DyteParticipantTile>
-              </div>
-            </div>
+              participant={participant}
+              presetName={JUDGE}
+            />
           ))}
         </div>
 
