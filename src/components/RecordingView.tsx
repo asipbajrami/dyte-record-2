@@ -4,7 +4,6 @@ import {
   DyteParticipantTile,
   DyteNameTag,
   DyteAudioVisualizer,
-  DyteMicToggle,
 } from '@dytesdk/react-ui-kit';
 import { useDyteMeeting, useDyteSelector } from '@dytesdk/react-web-core';
 import { DyteParticipant } from '@dytesdk/web-core';
