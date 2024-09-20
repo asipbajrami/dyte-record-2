@@ -18,7 +18,7 @@ type PresetName = typeof AFFIRMATIVE | typeof NEGATIVE | typeof JUDGE;
 const presetColors: { [key in PresetName]: string } = {
   [AFFIRMATIVE]: '#4a90e2', // Blue
   [NEGATIVE]: '#e57373',    // Red
-  [JUDGE]: '#ffd54f',       // Yellow
+  [JUDGE]: '#000000',       // Yellow
 };
 
 export default function RecordingView() {
@@ -55,15 +55,18 @@ export default function RecordingView() {
 
   const renderParticipantColumn = (presetName: PresetName, columnStyle: React.CSSProperties) => {
     const presetParticipants = getParticipantsByPreset(presetName);
+    const totalParticipants = presetParticipants.length;
+
     return (
       <div style={columnStyle}>
         {presetParticipants.map((participant, index) => (
           <div key={participant.id} style={{
-            height: `${100 / presetParticipants.length}%`,
+            height: totalParticipants > 1 ? `${100 / totalParticipants}%` : '50%', // Set max height if only one participant
             marginBottom: index < presetParticipants.length - 1 ? '10px' : '0',
             borderRadius: '8px',
             overflow: 'hidden',
             position: 'relative',
+            maxHeight: '400px', // Prevents the participant from becoming too large
           }}>
             {/* DyteParticipantTile with custom DyteNameTag */}
             <DyteParticipantTile participant={participant} meeting={meeting} style={{ height: '100%' }}>
