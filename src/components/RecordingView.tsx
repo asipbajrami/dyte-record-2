@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   DyteParticipantsAudio,
   DyteParticipantTile,
-  DyteNameTag,
-  DyteAudioVisualizer,
   DyteMicToggle,
   DyteIcon,
 } from '@dytesdk/react-ui-kit';
@@ -15,13 +13,14 @@ const AFFIRMATIVE = 'affirmative';
 const NEGATIVE = 'negative';
 const JUDGE = 'judge';
 
+// Add this type definition
 type PresetName = typeof AFFIRMATIVE | typeof NEGATIVE | typeof JUDGE;
 
-const presetColors: { [key in PresetName]: string } = {
-  [AFFIRMATIVE]: '#4a90e2', // Blue
-  [NEGATIVE]: '#e57373', // Red
-  [JUDGE]: '#000', // Yellow
-};
+// const presetColors: { [key in PresetName]: string } = {
+//   [AFFIRMATIVE]: '#4a90e2', // Blue
+//   [NEGATIVE]: '#e57373',    // Red
+//   [JUDGE]: '#ffd54f',       // Yellow
+// };
 
 export default function RecordingView() {
   const { meeting } = useDyteMeeting();
@@ -46,8 +45,14 @@ export default function RecordingView() {
     meeting.participants.joined.on('participantLeft', handleParticipantLeave);
 
     return () => {
-      meeting.participants.joined.off('participantJoined', handleParticipantJoin);
-      meeting.participants.joined.off('participantLeft', handleParticipantLeave);
+      meeting.participants.joined.off(
+        'participantJoined',
+        handleParticipantJoin
+      );
+      meeting.participants.joined.off(
+        'participantLeft',
+        handleParticipantLeave
+      );
     };
   }, [meeting, joinedParticipants]);
 
@@ -57,29 +62,12 @@ export default function RecordingView() {
     return participants.filter((p) => p.presetName === presetName);
   };
 
-  // Create a separate component for ParticipantTile
+  // Updated ParticipantTile component
   const ParticipantTile = ({
     participant,
-    presetName,
   }: {
     participant: DyteParticipant;
-    presetName: PresetName;
   }) => {
-    const [audioEnabled, setAudioEnabled] = useState(participant.audioEnabled);
-
-    useEffect(() => {
-      const handleAudioUpdate = () => {
-        setAudioEnabled(participant.audioEnabled);
-      };
-
-      // Listen for audio updates
-      participant.on('audioUpdate', handleAudioUpdate);
-
-      return () => {
-        participant.off('audioUpdate', handleAudioUpdate);
-      };
-    }, [participant]);
-
     return (
       <div
         key={participant.id}
@@ -108,27 +96,32 @@ export default function RecordingView() {
               height: '100%',
             }}
           >
-            <DyteNameTag
-              participant={participant}
+            {/* Custom overlay */}
+            <div
+              slot="overlay"
               style={{
-                backgroundColor: presetColors[presetName],
+                position: 'absolute',
+                bottom: '0',
+                width: '100%',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
                 color: 'white',
+                padding: '5px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
               }}
             >
-              <DyteAudioVisualizer slot="start" />
-              {/* Display Mic Toggle for local participant, mic status icon for others */}
+              {/* Display participant's name directly */}
+              <div>{participant.name}</div>
               {participant.id === meeting.self.id ? (
-                // For local participant, show Mic Toggle
-                <DyteMicToggle slot="end" size="sm" meeting={meeting} />
+                <DyteMicToggle size="sm" meeting={meeting} />
               ) : (
-                // For remote participants, show mic status icon
                 <DyteIcon
-                  slot="end"
-                  icon={audioEnabled ? 'mic' : 'mic_off'}
+                  icon={participant.audioEnabled ? 'mic' : 'mic_off'}
                   style={{ color: 'white' }}
                 />
               )}
-            </DyteNameTag>
+            </div>
           </DyteParticipantTile>
         </div>
       </div>
@@ -151,11 +144,7 @@ export default function RecordingView() {
         }}
       >
         {presetParticipants.map((participant) => (
-          <ParticipantTile
-            key={participant.id}
-            participant={participant}
-            presetName={presetName}
-          />
+          <ParticipantTile key={participant.id} participant={participant} />
         ))}
       </div>
     );
@@ -201,11 +190,7 @@ export default function RecordingView() {
           }}
         >
           {judgeParticipants.map((participant) => (
-            <ParticipantTile
-              key={participant.id}
-              participant={participant}
-              presetName={JUDGE}
-            />
+            <ParticipantTile key={participant.id} participant={participant} />
           ))}
         </div>
 
