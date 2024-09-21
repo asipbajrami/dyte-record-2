@@ -12,13 +12,15 @@ import logo from '../assets/logo.png';
 const AFFIRMATIVE = 'affirmative';
 const NEGATIVE = 'negative';
 const JUDGE = 'judge';
+const SOLO = 'solo';
 
-type PresetName = typeof AFFIRMATIVE | typeof NEGATIVE | typeof JUDGE;
+type PresetName = typeof AFFIRMATIVE | typeof NEGATIVE | typeof JUDGE | typeof SOLO;
 
 const presetColors: { [key in PresetName]: string } = {
   [AFFIRMATIVE]: '#043B6D', // Blue
-  [NEGATIVE]: '#641316',    // Red
-  [JUDGE]: '#0D0B0E',      // Black 
+  [NEGATIVE]: '#641316', // Red
+  [JUDGE]: '#0D0B0E', // Black
+  [SOLO]: '#471a55', // Purple
 };
 
 export default function RecordingView() {
@@ -50,9 +52,12 @@ export default function RecordingView() {
   }, [meeting, joinedParticipants]);
 
   const getParticipantsByPreset = (
-    presetName: PresetName
+    presetNames: PresetName | PresetName[]
   ): DyteParticipant[] => {
-    return participants.filter((p) => p.presetName === presetName);
+    const names = Array.isArray(presetNames) ? presetNames : [presetNames];
+    return participants.filter(
+      (p) => p.presetName && names.includes(p.presetName as PresetName)
+    );
   };
 
   // ParticipantTile component with DyteNameTag and DyteAudioVisualizer
@@ -108,10 +113,10 @@ export default function RecordingView() {
   };
 
   const renderParticipantColumn = (
-    presetName: PresetName,
+    presetNames: PresetName | PresetName[],
     columnStyle: React.CSSProperties
   ) => {
-    const presetParticipants = getParticipantsByPreset(presetName);
+    const presetParticipants = getParticipantsByPreset(presetNames);
 
     return (
       <div
@@ -126,7 +131,7 @@ export default function RecordingView() {
           <ParticipantTile
             key={participant.id}
             participant={participant}
-            presetName={presetName}
+            presetName={participant.presetName as PresetName}
           />
         ))}
       </div>
@@ -176,13 +181,13 @@ export default function RecordingView() {
             <ParticipantTile
               key={participant.id}
               participant={participant}
-              presetName={JUDGE}
+              presetName={participant.presetName as PresetName}
             />
           ))}
         </div>
 
-        {/* Affirmative Column */}
-        {renderParticipantColumn(AFFIRMATIVE, {
+        {/* Affirmative and Solo Column */}
+        {renderParticipantColumn([AFFIRMATIVE, SOLO], {
           width: '33.33%',
           padding: '10px',
         })}
