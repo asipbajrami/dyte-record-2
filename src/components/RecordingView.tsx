@@ -18,9 +18,9 @@ type PresetName = typeof AFFIRMATIVE | typeof NEGATIVE | typeof JUDGE | typeof S
 
 const presetColors: { [key in PresetName]: string } = {
   [AFFIRMATIVE]: '#043B6D', // Blue
-  [NEGATIVE]: '#641316', // Red
-  [JUDGE]: '#0D0B0E', // Black
-  [SOLO]: '#471a55', // Purple
+  [NEGATIVE]: '#641316',    // Red
+  [JUDGE]: '#0D0B0E',       // Black 
+  [SOLO]: '#471a55',        // Purple
 };
 
 export default function RecordingView() {
@@ -112,22 +112,39 @@ export default function RecordingView() {
     );
   };
 
-  const renderParticipantColumn = (
-    presetNames: PresetName | PresetName[],
+  // Fetch participants by presets
+  const negativeParticipants = getParticipantsByPreset(NEGATIVE);
+  const affirmativeParticipants = getParticipantsByPreset(AFFIRMATIVE);
+  const judgeParticipants = getParticipantsByPreset(JUDGE);
+  const soloParticipants = getParticipantsByPreset(SOLO);
+
+  // Initialize left and right columns
+  const leftColumnParticipants = [...negativeParticipants];
+  const rightColumnParticipants = [...affirmativeParticipants];
+
+  // Distribute SOLO participants between left and right columns
+  soloParticipants.forEach((participant, index) => {
+    if (index % 2 === 0) {
+      leftColumnParticipants.push(participant);
+    } else {
+      rightColumnParticipants.push(participant);
+    }
+  });
+
+  const renderParticipantsColumn = (
+    participants: DyteParticipant[],
     columnStyle: React.CSSProperties
   ) => {
-    const presetParticipants = getParticipantsByPreset(presetNames);
-
     return (
       <div
         style={{
           ...columnStyle,
           display: 'grid',
-          gridTemplateRows: `repeat(${presetParticipants.length}, 1fr)`,
+          gridTemplateRows: `repeat(${participants.length}, 1fr)`,
           gap: '10px',
         }}
       >
-        {presetParticipants.map((participant) => (
+        {participants.map((participant) => (
           <ParticipantTile
             key={participant.id}
             participant={participant}
@@ -137,8 +154,6 @@ export default function RecordingView() {
       </div>
     );
   };
-
-  const judgeParticipants = getParticipantsByPreset(JUDGE);
 
   return (
     <main
@@ -160,8 +175,8 @@ export default function RecordingView() {
           overflow: 'hidden',
         }}
       >
-        {/* Negative Column */}
-        {renderParticipantColumn(NEGATIVE, {
+        {/* Left Column */}
+        {renderParticipantsColumn(leftColumnParticipants, {
           width: '33.33%',
           padding: '10px',
         })}
@@ -186,8 +201,8 @@ export default function RecordingView() {
           ))}
         </div>
 
-        {/* Affirmative and Solo Column */}
-        {renderParticipantColumn([AFFIRMATIVE, SOLO], {
+        {/* Right Column */}
+        {renderParticipantsColumn(rightColumnParticipants, {
           width: '33.33%',
           padding: '10px',
         })}
