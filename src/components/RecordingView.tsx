@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   DyteParticipantsAudio,
   DyteParticipantTile,
@@ -18,79 +18,98 @@ type PresetName = typeof AFFIRMATIVE | typeof NEGATIVE | typeof JUDGE | typeof S
 
 const presetColors: { [key in PresetName]: string } = {
   [AFFIRMATIVE]: '#043B6D', // Blue
-  [NEGATIVE]: '#641316', // Red
-  [JUDGE]: '#0D0B0E', // Black
-  [SOLO]: '#471a55', // Purple
+  [NEGATIVE]: '#641316',    // Red
+  [JUDGE]: '#0D0B0E',       // Black 
+  [SOLO]: '#471a55',        // Purple
 };
 
 export default function RecordingView() {
   const { meeting } = useDyteMeeting();
+  const [participants, setParticipants] = useState<DyteParticipant[]>([]);
 
   const joinedParticipants = useDyteSelector((meeting) =>
     meeting.participants.joined.toArray()
   );
 
+  useEffect(() => {
+    setParticipants(joinedParticipants);
+
+    const handleParticipantJoin = (participant: DyteParticipant) => {
+      setParticipants((prev) => [...prev, participant]);
+    };
+
+    const handleParticipantLeave = (participant: DyteParticipant) => {
+      setParticipants((prev) => prev.filter((p) => p.id !== participant.id));
+    };
+
+    meeting.participants.joined.on('participantJoined', handleParticipantJoin);
+    meeting.participants.joined.on('participantLeft', handleParticipantLeave);
+
+    return () => {
+      meeting.participants.joined.off('participantJoined', handleParticipantJoin);
+      meeting.participants.joined.off('participantLeft', handleParticipantLeave);
+    };
+  }, [meeting]); // Removed 'joinedParticipants' from dependency array
+
   const getParticipantsByPreset = (
     presetNames: PresetName | PresetName[]
   ): DyteParticipant[] => {
     const names = Array.isArray(presetNames) ? presetNames : [presetNames];
-    return joinedParticipants.filter(
+    return participants.filter(
       (p) => p.presetName && names.includes(p.presetName as PresetName)
     );
   };
 
   // ParticipantTile component with DyteNameTag and DyteAudioVisualizer
-  const ParticipantTile = React.memo(
-    ({
-      participant,
-      presetName,
-    }: {
-      participant: DyteParticipant;
-      presetName: PresetName;
-    }) => {
-      return (
+  const ParticipantTile = ({
+    participant,
+    presetName,
+  }: {
+    participant: DyteParticipant;
+    presetName: PresetName;
+  }) => {
+    return (
+      <div
+        style={{
+          width: '100%',
+          position: 'relative',
+          borderRadius: '8px',
+          overflow: 'hidden',
+        }}
+      >
         <div
           style={{
-            width: '100%',
             position: 'relative',
-            borderRadius: '8px',
-            overflow: 'hidden',
+            width: '100%',
+            paddingTop: '56.25%', // 16:9 aspect ratio
           }}
         >
-          <div
+          <DyteParticipantTile
+            participant={participant}
+            meeting={meeting}
             style={{
-              position: 'relative',
+              position: 'absolute',
+              top: 0,
+              left: 0,
               width: '100%',
-              paddingTop: '56.25%', // 16:9 aspect ratio
+              height: '100%',
             }}
           >
-            <DyteParticipantTile
+            <DyteNameTag
               participant={participant}
-              meeting={meeting}
               style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
+                backgroundColor: presetColors[presetName],
+                color: 'white',
               }}
             >
-              <DyteNameTag
-                participant={participant}
-                style={{
-                  backgroundColor: presetColors[presetName],
-                  color: 'white',
-                }}
-              >
-                {/* Audio Visualizer */}
-                <DyteAudioVisualizer participant={participant} slot="start" />
-              </DyteNameTag>
-            </DyteParticipantTile>
-          </div>
+              {/* Audio Visualizer */}
+              <DyteAudioVisualizer participant={participant} slot="start" />
+            </DyteNameTag>
+          </DyteParticipantTile>
         </div>
-      );
-    }
-  );
+      </div>
+    );
+  };
 
   // Fetch participants by presets
   const negativeParticipants = getParticipantsByPreset(NEGATIVE);
@@ -111,29 +130,29 @@ export default function RecordingView() {
     }
   });
 
-  const renderParticipantsColumn = React.useCallback(
-    (participants: DyteParticipant[], columnStyle: React.CSSProperties) => {
-      return (
-        <div
-          style={{
-            ...columnStyle,
-            display: 'grid',
-            gridTemplateRows: `repeat(${participants.length}, 1fr)`,
-            gap: '10px',
-          }}
-        >
-          {participants.map((participant) => (
-            <ParticipantTile
-              key={participant.id}
-              participant={participant}
-              presetName={participant.presetName as PresetName}
-            />
-          ))}
-        </div>
-      );
-    },
-    []
-  );
+  const renderParticipantsColumn = (
+    participants: DyteParticipant[],
+    columnStyle: React.CSSProperties
+  ) => {
+    return (
+      <div
+        style={{
+          ...columnStyle,
+          display: 'grid',
+          gridTemplateRows: `repeat(${participants.length}, 1fr)`,
+          gap: '10px',
+        }}
+      >
+        {participants.map((participant) => (
+          <ParticipantTile
+            key={participant.id}
+            participant={participant}
+            presetName={participant.presetName as PresetName}
+          />
+        ))}
+      </div>
+    );
+  };
 
   return (
     <main
@@ -161,7 +180,7 @@ export default function RecordingView() {
           padding: '10px',
         })}
 
-        {/* Center Column with Judges */}
+        {/* Center Column with Judges and Logo */}
         <div
           style={{
             width: '33.33%',
@@ -194,8 +213,7 @@ export default function RecordingView() {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            zIndex: 1,
-            pointerEvents: 'none',
+            zIndex: 10,
           }}
         >
           <img
