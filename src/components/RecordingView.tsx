@@ -49,7 +49,7 @@ export default function RecordingView() {
       meeting.participants.joined.off('participantJoined', handleParticipantJoin);
       meeting.participants.joined.off('participantLeft', handleParticipantLeave);
     };
-  }, [meeting]); // Removed 'joinedParticipants' from dependency array
+  }, [meeting, joinedParticipants]);
 
   const getParticipantsByPreset = (
     presetNames: PresetName | PresetName[]
@@ -70,6 +70,7 @@ export default function RecordingView() {
   }) => {
     return (
       <div
+        key={participant.id}
         style={{
           width: '100%',
           position: 'relative',
