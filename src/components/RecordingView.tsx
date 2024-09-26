@@ -90,6 +90,7 @@ const ParticipantTile = React.memo(({
   );
 });
 
+
 export default function RecordingView() {
   const { meeting } = useDyteMeeting();
   const [participants, setParticipants] = useState<DyteParticipant[]>([]);
@@ -99,7 +100,7 @@ export default function RecordingView() {
   );
 
   const debouncedSetParticipants = useCallback(
-    debounce((newParticipants) => {
+    debounce((newParticipants: DyteParticipant[]) => {
       setParticipants(newParticipants);
     }, 100),
     []
@@ -109,11 +110,11 @@ export default function RecordingView() {
     debouncedSetParticipants(joinedParticipants);
 
     const handleParticipantJoin = (participant: DyteParticipant) => {
-      debouncedSetParticipants((prev: DyteParticipant[]) => [...prev, participant]);
+      setParticipants((prev) => [...prev, participant]);
     };
 
     const handleParticipantLeave = (participant: DyteParticipant) => {
-      debouncedSetParticipants((prev: DyteParticipant[]) => prev.filter((p) => p.id !== participant.id));
+      setParticipants((prev) => prev.filter((p) => p.id !== participant.id));
     };
 
     meeting.participants.joined.on('participantJoined', handleParticipantJoin);
@@ -124,7 +125,7 @@ export default function RecordingView() {
       meeting.participants.joined.off('participantLeft', handleParticipantLeave);
     };
   }, [meeting, joinedParticipants, debouncedSetParticipants]);
-
+  
   const getParticipantsByPreset = (
     presetNames: PresetName | PresetName[]
   ): DyteParticipant[] => {
