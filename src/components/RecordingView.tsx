@@ -99,21 +99,21 @@ export default function RecordingView() {
   );
 
   const debouncedSetParticipants = useCallback(
-    debounce((newParticipants: DyteParticipant[]) => {
-      setParticipants(newParticipants);
+    debounce((updater: (prev: DyteParticipant[]) => DyteParticipant[]) => {
+      setParticipants(updater);
     }, 100),
     []
   );
 
   useEffect(() => {
-    debouncedSetParticipants(joinedParticipants);
+    debouncedSetParticipants(() => joinedParticipants);
 
     const handleParticipantJoin = (participant: DyteParticipant) => {
-      debouncedSetParticipants([...participants, participant]);
+      debouncedSetParticipants((prev) => [...prev, participant]);
     };
 
     const handleParticipantLeave = (participant: DyteParticipant) => {
-      debouncedSetParticipants(participants.filter((p) => p.id !== participant.id));
+      debouncedSetParticipants((prev) => prev.filter((p) => p.id !== participant.id));
     };
 
     meeting.participants.joined.on('participantJoined', handleParticipantJoin);
@@ -123,7 +123,7 @@ export default function RecordingView() {
       meeting.participants.joined.off('participantJoined', handleParticipantJoin);
       meeting.participants.joined.off('participantLeft', handleParticipantLeave);
     };
-  }, [meeting, joinedParticipants, debouncedSetParticipants, participants]);
+  }, [meeting, joinedParticipants, debouncedSetParticipants]);
 
   const getParticipantsByPreset = (
     presetNames: PresetName | PresetName[]
