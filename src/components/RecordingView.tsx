@@ -36,14 +36,31 @@ const ParticipantTile = React.memo(({
   const [isVideoReady, setIsVideoReady] = useState(false);
 
   useEffect(() => {
-    if (participant.videoTrack) {
-      setIsVideoReady(true);
-    }
-  }, [participant.videoTrack]);
+    console.log(`Participant ${participant.name} (${participant.id}): Video track status:`, participant.videoEnabled);
+    
+    const checkVideoTrack = () => {
+      if (participant.videoEnabled && participant.videoTrack) {
+        console.log(`Participant ${participant.name} (${participant.id}): Video track ready`);
+        setIsVideoReady(true);
+      } else {
+        console.log(`Participant ${participant.name} (${participant.id}): Video track not ready`);
+        setIsVideoReady(false);
+      }
+    };
 
-  if (!isVideoReady) {
-    return <div>Loading...</div>;
-  }
+    checkVideoTrack();
+
+    const videoUpdateListener = () => {
+      console.log(`Participant ${participant.name} (${participant.id}): Video update event`);
+      checkVideoTrack();
+    };
+
+    participant.on('videoUpdate', videoUpdateListener);
+
+    return () => {
+      participant.off('videoUpdate', videoUpdateListener);
+    };
+  }, [participant]);
 
   return (
     <div
@@ -86,6 +103,22 @@ const ParticipantTile = React.memo(({
           </DyteNameTag>
         </DyteParticipantTile>
       </div>
+      {!isVideoReady && (
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          color: 'white',
+        }}>
+          Loading...
+        </div>
+      )}
     </div>
   );
 });
@@ -106,13 +139,16 @@ export default function RecordingView() {
   );
 
   useEffect(() => {
+    console.log('Joined participants:', joinedParticipants);
     debouncedSetParticipants(() => joinedParticipants);
 
     const handleParticipantJoin = (participant: DyteParticipant) => {
+      console.log('Participant joined:', participant);
       debouncedSetParticipants((prev) => [...prev, participant]);
     };
 
     const handleParticipantLeave = (participant: DyteParticipant) => {
+      console.log('Participant left:', participant);
       debouncedSetParticipants((prev) => prev.filter((p) => p.id !== participant.id));
     };
 
